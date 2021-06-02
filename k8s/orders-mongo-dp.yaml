@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orders-mongodb
+  labels:
+    app: orders
+  namespace: micro
+spec:
+  selector:
+    matchLabels:
+      app: orders
+      tier: orders
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: orders
+        tier: orders
+    spec:
+      containers:
+      - image: mongo
+        name: mongodb
+        ports:
+        - containerPort: 27017
+          name: mongodb
+        volumeMounts:
+        - name: orders-persistent-storage
+          mountPath: /var/lib/orders
+      volumes:
+      - name: orders-persistent-storage
+        persistentVolumeClaim:
+          claimName: orders
